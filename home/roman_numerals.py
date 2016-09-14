@@ -3,10 +3,20 @@
 # Output: The Roman numeral as a string.
 # Precondition: 0 < number < 4000
 
+
 def checkio(data):
 
-    #replace this for solution
-    return ""
+    ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    nums = ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
+    num_map = dict(zip(ints, nums))
+    result = []
+    for i in reversed(sorted(num_map)):
+        count = data // i
+        result.append(num_map[i] * count)
+        data -= i * count
+    final = ''.join(result)
+    return final
+
 
 if __name__ == '__main__':
     #These "asserts" using only for self-checking and not necessary for auto-testing
