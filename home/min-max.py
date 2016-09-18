@@ -5,45 +5,57 @@
 # max(arg1, arg2, *args[, key]) or min(arg1, arg2, *args[, key])
 
 
+def compare_min(x, y, key):
+    # If there is a key, use it
+    if key is not None:
+        if key(y) > key(x):
+            return x
+    else:
+        if y > x:
+            return x
+    return y
+
+
 def min(*args, **kwargs):
-    print('\n')
-    print('args = {} {}'.format(args, type(args)))
-    print('kwargs = {} {}'.format(kwargs, type(kwargs)))
     key = kwargs.get("key", None)
+    # if args is only one item it's probably a container or a string...
     if len(args) == 1:
+        # ...so make it a list.
         args = list(args[0])
 
-
     value = sorted(args)[0]
-    # print('value = {} {}'.format(value, type(value)))
-    # if type(value) is list:
-    #     value = sorted(value)[0]
-    # if type(value) is str:
-    #     value = sorted(value)[0]
-    print('value = {} {}'.format(value, type(value)))
+
+    for arg in range(1, len(args)):
+        value = compare_min(value, args[arg], key)
+
     return value
 
 
+def compare_max(x, y, key):
+    print('compare_max: {}, {}, {}'.format(x, y, key))
+    # If there is a key, use it
+    if key is not None:
+        if key(y) > key(x):
+            return y
+    else:
+        if y > x:
+            return y
+    return x
+
+
 def max(*args, **kwargs):
-    print('\n')
-    print('args = {} {}'.format(args, type(args)))
-    print('kwargs = {} {}'.format(kwargs, type(kwargs)))
     key = kwargs.get("key", None)
 
+    # if args is only one item it's probably a container or a string...
     if len(args) == 1:
+        # ...so make it a list
         args = list(args[0])
 
-    value = sorted(args)[-1]
-    # print('value = {} {}'.format(value, type(value)))
-    #
-    # if type(value) is list:
-    #     value = sorted(value)[-1]
-    # if type(value) is str:
-    #     value = sorted(value)[-1]
-    if key:
-        print('key = {}'.format(key))
-        value = key(value)
-    print('value = {} {}'.format(value, type(value)))
+    value = args[0]
+
+    for arg in range(1, len(args)):
+        value = compare_max(value, args[arg], key)
+
     return value
 
 
