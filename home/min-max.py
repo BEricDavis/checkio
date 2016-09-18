@@ -6,6 +6,7 @@
 
 
 def compare_min(x, y, key):
+    print('compare_min: {}, {}, {}'.format(x, y, key))
     # If there is a key, use it
     if key is not None:
         if key(y) > key(x):
@@ -17,15 +18,20 @@ def compare_min(x, y, key):
 
 
 def min(*args, **kwargs):
+    print('\n')
     key = kwargs.get("key", None)
     # if args is only one item it's probably a container or a string...
+    print('args starts as: {}'.format(args))
     if len(args) == 1:
         # ...so make it a list.
         args = list(args[0])
+        print('converted args to {}'.format(args))
 
-    value = sorted(args)[0]
+    # value = sorted(args)[0]
+    value = args[0]
 
     for arg in range(1, len(args)):
+        print('comparing {} and {}'.format(value, args[arg]))
         value = compare_min(value, args[arg], key)
 
     return value
@@ -67,3 +73,5 @@ if __name__ == '__main__':
     assert min("hello") == "e", "From string"
     assert max(2.2, 5.6, 5.9, key=int) == 5.6, "Two maximal items"
     assert min([[1, 2], [3, 4], [9, 0]], key=lambda x: x[1]) == [9, 0], "lambda key"
+
+    assert min([1, 2, 3], [5, 6], [7], [0, 0, 0, 10], key=sum) == [1, 2, 3], "sum key"
