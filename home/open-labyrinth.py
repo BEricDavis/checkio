@@ -18,16 +18,17 @@ def checkio(maze_map):
 
     # while we're not at the goal
     if __name__ == '__main__':
-        pos = start
-        while pos is not maze_map[10][10]:
-            pass
-            # Breadth - First - Search(Graph, root):
+        # Breadth - First - Search(Graph, root):
+        def bfs(map):
+            pos = start
+
+
             # for each node n in Graph:
-            for node in maze_map:
+            for n in maze_map:
             #     n.distance = INFINITY
-                node.distance = -1
+                n.distance = -1
             #     n.parent = NIL
-                node.parent = None
+                n.parent = None
             #   create empty queue Q
                 queue = Queue.Queue()
             #
@@ -40,15 +41,35 @@ def checkio(maze_map):
                 while queue:
             #       current = Q.dequeue()
                     current = queue.get()
-                    ## Find adjacent nodes
-            #
+
+                    adjacent_nodes = get_adjacent_nodes(maze_map, n[x], n[y])
             #       for each node n that is adjacent to current:
+                    for node in adjacent_nodes:
             #           if n.distance == INFINITY:
+                        if 
             #               n.distance = current.distance + 1
             #               n.parent = current
             #               Q.enqueue(n)
 
     return "SSSSSEENNNEEEEEEESSWWWWSSSEEEESS"
+
+def get_adjacent_nodes(lab, x, y):
+    """
+    Given indices x and y, determine which adjacent elements in the matrix are valid paths
+    :param x: The row of the matrix
+    :param y: The column of the matrix
+    :return:
+    """
+    adjacent_nodes = []
+    if lab[x+1][y] == 0:
+        adjacent_nodes.append(lab[x+1][y])
+    if lab[x-1][y] == 0:
+        adjacent_nodes.append(lab[x-1][y])
+    if lab[x][y-1] == 0:
+        adjacent_nodes.append(lab[x][y-1])
+    if lab[x][y+1] == 0:
+        adjacent_nodes.append(lab[x][y+1])
+    return adjacent_nodes
 
 
 if __name__ == '__main__':
