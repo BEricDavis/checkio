@@ -46,7 +46,8 @@ def checkio(maze_map):
             #       for each node n that is adjacent to current:
                     for node in adjacent_nodes:
             #           if n.distance == INFINITY:
-                        if 
+                        if 1:
+                            pass
             #               n.distance = current.distance + 1
             #               n.parent = current
             #               Q.enqueue(n)
