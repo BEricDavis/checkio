@@ -5,64 +5,51 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(funcName)s: %(lineno)d %(message)s')
 
 s = (1, 1)
-level = {s: 0}
-dirs = collections.defaultdict(str)
 
 
-def find_children(p, maze_map):
-    """Find adjacent nodes.  If a node is a 0 (a valid path) and has not had its level recorded
-    ret."""
+def find_children(p, maze_map, seen, dirs):
+    """Find adjacent nodes.  If a node is a 0 (a valid path) and has not been seen
+    add it to the list of children."""
     logging.info('Finding Children of {}'.format(p))
     child_list = []
-    curr_x = p[0]
-    curr_y = p[1]
-    logging.info('curr_x: {}, curr_y: {}'.format(curr_x, curr_y))
-    # check west
-    logging.info('WEST: curr_x-1, curr_y is {}'.format(maze_map[curr_x - 1][curr_y]))
-    if maze_map[curr_x - 1][curr_y] not in level and maze_map[curr_x - 1][curr_y] == 0:
-        logging.info('Adding ({}, {})'.format(curr_x - 1, curr_y))
-        child_list.append((curr_x - 1, curr_y))
-        dirs[(curr_x -1, curr_y)] = 'W'
+    moves = {(1, 0): "S", (-1, 0): "N", (0, -1): "W", (0, 1): "E" }
 
+    for move in moves:
+        check_x = p[0] + move[0]
+        check_y = p[1] + move[1]
+        node = (check_x, check_y)
+        logging.info('Checking move {}  to ({}, {})'.format(move, check_x, check_y))
+        if maze_map[check_x][check_y] == 1:
+            continue
+        if (check_x, check_y) not in seen:
+            logging.info('Adding node ({}, {}) as a child'.format(check_x, check_y))
+            child_list.append((check_x, check_y))
+            seen[node] = 0
+            logging.info('Adding "{}" to dirs'.format(moves[move]))
+            dirs[node] = moves[move]
+        else:
+            logging.info('Seen it')
 
-    # check south
-    logging.info('SOUTH: curr_x, curr_y+1 is {}'.format(maze_map[curr_x][curr_y + 1]))
-    if maze_map[curr_x][curr_y + 1] not in level and maze_map[curr_x][curr_y + 1] == 0:
-        logging.info('\tAdding ({}, {})'.format(curr_x, curr_y + 1))
-        child_list.append((curr_x, curr_y + 1))
-        dirs[(curr_x, curr_y+1 )] = 'S'
-
-    # check east
-    logging.info('EAST: curr_x+1, curr_y is {}'.format(maze_map[curr_x + 1][curr_y]))
-    if maze_map[curr_x + 1][curr_y] not in level and maze_map[curr_x + 1][curr_y] == 0:
-        logging.info('\tAdding ({}, {})'.format(curr_x + 1, curr_y))
-        child_list.append((curr_x + 1, curr_y))
-        dirs[(curr_x + 1, curr_y)] = 'E'
-
-    # check north
-    logging.info('NORTH: curr_x, curr_y-1 is {}'.format(maze_map[curr_x][curr_y-1]))
-    if maze_map[curr_x][curr_y - 1] not in level and maze_map[curr_x][curr_y - 1] == 0:
-        logging.info('\tAdding ({}, {})'.format(curr_x, curr_y - 1))
-        child_list.append((curr_x, curr_y - 1))
-        dirs[(curr_x, curr_y-1)] = 'N'
-
-    logging.info('Returning: {}'.format(child_list))
     return child_list
 
+
 def checkio(maze_map):
+    dirs = collections.defaultdict(str)
+    seen = collections.defaultdict(int)
+    logging.info('dirs: {}'.format(len(dirs)))
+    logging.info('seen: {}'.format(len(seen)))
+    seen[(1, 1)] = None
     # s = (1, 1)
-    # level = {s: 0}
-    parents = {s:
-                   {'parent': None,
-                    'direction': None}
-               }
+    level = {s: 0}
+    parents = { s: None }
     i = 1
     frontier = [s]  # level i - 1
     print_maze(maze_map)
     while frontier:
         next = []  # level i
         for u in frontier:
-            for v in find_children(u, maze_map):
+            for v in find_children(u, maze_map, seen, dirs):
+                logging.info('v: {}'.format(v))
                 if v not in level:
                     level[v] = i
                     parents[v] = u
@@ -73,9 +60,13 @@ def checkio(maze_map):
     node = (10,10)
     path = []
 
+    logging.info('Backtracking from {}'.format(node))
     while node != (1, 1):
+        logging.info('Node: {}'.format(node))
         parent = parents[node]
-        path.append(dirs[parent])
+        logging.info('parent: {}'.format(parent))
+        path.append(dirs[node])
+        logging.info('direction: {}'.format(dirs[node]))
         node = parent
 
     path.reverse()
@@ -84,7 +75,7 @@ def checkio(maze_map):
     final_path = ''
     for d in path:
         final_path += d
-
+    logging.info('Final path: {}'.format(final_path))
     return final_path
 
     
@@ -103,10 +94,12 @@ if __name__ == '__main__':
         goal = (10, 10)
         for i, d in enumerate(route):
             move = MOVE.get(d, None)
+            logging.info('Move: {}'.format(move))
             if not move:
                 logging.info("Wrong symbol in route")
                 return False
             pos = pos[0] + move[0], pos[1] + move[1]
+            logging.info('Position: {}'.format(pos))
             if pos == goal:
                 return True
             if labyrinth[pos[0]][pos[1]] == 1:
